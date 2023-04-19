@@ -32,7 +32,6 @@
   }
 
   let getReferences = async () => {
-    updateReferences(nodePath)
     references = []
     references = await getNodeReferred(nodeName)
   }
@@ -63,7 +62,7 @@
       <strong>References</strong>
     {/if}
     {#each references as ref}
-      <div key={ref}>
+      <div>
         <Reference 
           sourceNode={ref}
           targetNode={nodeName}

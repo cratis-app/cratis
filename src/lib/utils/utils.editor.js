@@ -11,11 +11,9 @@ async function parseContent(line) {
   if (splitArr.length > 1) {
     level = splitArr[0].length/4
   }
-  let html = await convertMarkdown(line.substring(line.indexOf("-") + 2, line.length))
   return {
     level: level,
     content: line.substring(line.indexOf("-")+2, line.length),
-    html: html
   }
 }
 
