@@ -28,11 +28,14 @@ fn create_network(location: String, name: String) {
     nodes_dir.push_str("/nodes");
     let mut journal_dir = cratis_dir.clone();
     journal_dir.push_str("/journal");
+    let mut attachments_dir = cratis_dir.clone();
+    attachments_dir.push_str("/attachments");
 
     // create network directories
     fs::create_dir_all(cratis_dir).expect("Could not create network directory");
     fs::create_dir_all(nodes_dir).expect("Could not create nodes directory");
     fs::create_dir_all(journal_dir).expect("Could not create journal directory");
+    fs::create_dir_all(attachments_dir).expect("Could not create attachments dir");
 }
 
 #[tauri::command]

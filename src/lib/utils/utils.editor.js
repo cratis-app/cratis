@@ -56,4 +56,11 @@ function isDateFormat(string) {
   return regex.test(string)
 }
 
-export { parseContent, convertMarkdown, saveNode, searchNodes, isDateFormat }
+async function addAttachment(data) {
+  console.log(data)
+  let extension = data.split(';')[0].split('/')[1]
+  console.log(extension)
+  return ""
+}
+
+export { parseContent, convertMarkdown, saveNode, searchNodes, isDateFormat, addAttachment }
