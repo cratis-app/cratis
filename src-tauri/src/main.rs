@@ -9,6 +9,7 @@ use comrak::{markdown_to_html, ComrakOptions};
 use directories::ProjectDirs;
 use regex::{Regex, Captures};
 use serde::{Deserialize, Serialize};
+use pulldown_cmark::{Parser, Options, html};
 
 mod database;
 
@@ -49,12 +50,12 @@ fn open_node(nodePath: String) -> String {
 
 #[tauri::command]
 fn parse_md(content: String) -> String {
-    let mut opts = ComrakOptions::default();
-    opts.extension.strikethrough = true;
-    opts.extension.table = true;
-    opts.extension.tasklist = true;
-    opts.parse.smart = true;
-    let parsed_md = markdown_to_html(&content, &opts);
+    let mut options = Options::empty();
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    let parser = Parser::new_ext(&content, options);
+
+    let mut parsed_md = String::new();
+    html::push_html(&mut parsed_md, parser);
     let btn_html = "<button key=\"$1\" class=\"nodeLink\">$0</button>";
     let link_re = Regex::new(r"\[\[(.+?)\]\]").unwrap();
     let result = link_re.replace_all(&parsed_md, btn_html);

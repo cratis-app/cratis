@@ -37,7 +37,6 @@
     fragContent = active ? content : await convertMarkdown(content)
     await tick()
     let links = document.querySelectorAll('.nodeLink')
-    console.log(links)
     Array.from(links).forEach((el) => {
       el.addEventListener('click', handleOpenNode)
     })
@@ -481,58 +480,57 @@
 
 </script>
 
-<div 
-  id="frag-{key}" 
-  key={key}
-  class={`fragment ${dragging ? 'dragging' : ''}`}
-  on:dragover|preventDefault={handleDragOver}
-  on:dragenter|preventDefault={handleDragEnter}
-  on:drop={handleDrop}
->
+{#if fragContent !== undefined}
   <div 
-    class={`frag-drag ${hoverHandle ? 'draggable' : ''}`}
+    id="frag-{key}" 
     key={key}
-    style={`margin-left:calc(1em*${level})`}
-    on:dragstart={handleDragStart}
-    on:dragend={handleDragEnd}
-    draggable="true"
+    class={`fragment ${dragging ? 'dragging' : ''}`}
+    on:dragover|preventDefault={handleDragOver}
+    on:dragenter|preventDefault={handleDragEnter}
+    on:drop={handleDrop}
   >
     <div 
-      class="handle" 
-      on:mouseenter={() => hoverHandle = true}
-      on:mouseleave={() => hoverHandle = false}
-    >•</div>
-    <div
-      class={`content ${active ? 'active' : ''}`}
-      style={`width:calc(100% - 1em * ${level})`}
-      on:click={(e) => handleClick("focus", e)}
-      on:blur={(e) => handleClick("blur", e)}
-      on:input={handleInput}
-      on:keydown={handleKeydown}
-      contenteditable
+      class={`frag-drag ${hoverHandle ? 'draggable' : ''}`}
+      key={key}
+      style={`margin-left:calc(1em*${level})`}
+      on:dragstart={handleDragStart}
+      on:dragend={handleDragEnd}
+      draggable="true"
     >
-      {@html fragContent}
+      <div 
+        class="handle" 
+        on:mouseenter={() => hoverHandle = true}
+        on:mouseleave={() => hoverHandle = false}
+      >•</div>
+      <div
+        class={`content ${active ? 'active' : ''}`}
+        style={`width:calc(100% - 1em * ${level})`}
+        on:click={(e) => handleClick("focus", e)}
+        on:blur={(e) => handleClick("blur", e)}
+        on:input={handleInput}
+        on:keydown={handleKeydown}
+        contenteditable
+      >
+        {@html fragContent}
+      </div>
+      {#if linkSearch || tagSearch !== ""}
+        <ul id="searchLinkResults" style={`left:${caretOffset}px`}>
+          {#each searchResults as node, i}
+            <li
+              key={node}
+              on:click={(e) => handleAutoComplete(e.target.attribute[0].nodeValue)}
+              on:keydown|preventDefault
+              class={activeNode === i ? 'activeNode' : ''}
+              on:mouseover={() => activeNode = i}
+            >
+              {node}
+            </li>
+          {/each}
+        </ul>
+      {/if}
     </div>
-    {#if linkSearch || tagSearch !== ""}
-      <ul id="searchLinkResults" style={`left:${caretOffset}px`}>
-        {#each searchResults as node, i}
-          <li
-            key={node}
-            on:click={(e) => handleAutoComplete(e.target.attribute[0].nodeValue)}
-            on:keydown|preventDefault
-            class={activeNode === i ? 'activeNode' : ''}
-            on:mouseover={() => activeNode = i}
-          >
-            {node}
-          </li>
-        {/each}
-      </ul>
-    {/if}
-
   </div>
- 
-</div>
-
+{/if}
 <style lang="scss">
   .frag-drag {
     pointer-events: none;

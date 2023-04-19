@@ -1,6 +1,6 @@
 <script>
   import { getSourceContent } from '../../utils/utils.database.js' 
-  import { parseContent, isDateFormat } from '../../utils/utils.editor.js';
+  import { parseContent, isDateFormat, convertMarkdown } from '../../utils/utils.editor.js';
   import { createNode } from '../../utils/utils.network.js'
   import { user } from '../../stores/UserStore.js';
   import { editor } from '../../stores/EditorStore.js';
@@ -16,10 +16,11 @@
 
     for (let i=0; i<lines.length; i++) {
       let parsedContent = await parseContent(lines[i])
+      let htmlContent = await convertMarkdown(parsedContent.content)
       refFragments[i] = {
         key: i,
         level: parsedContent.level,
-        content: parsedContent.html,
+        content: htmlContent,
         active: false 
       }
       refFragments = refFragments
@@ -98,7 +99,7 @@
 
 <div id="refSource">
   <button key={sourceNode} class="nodeLink">{sourceNode}</button> 
-  {#each filteredFrags as frag}
+  {#each filteredFrags as frag (frag.key)}
     <div
       class="fragContainer"
       style={`margin-left:calc(1em + 1em*${frag.level});width:calc(100% - 1em*${frag.level} - 1em)`}
