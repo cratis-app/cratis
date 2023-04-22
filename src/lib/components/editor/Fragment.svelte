@@ -2,7 +2,7 @@
   import { createNode } from "../../utils/utils.network";
   import { editor } from "../../stores/EditorStore";
   import { user } from "../../stores/UserStore";
-  import { isDateFormat } from '../../utils/utils.editor.js'
+  import { isDateFormat, addAttachment } from '../../utils/utils.editor.js'
   import { searchNodes } from "../../utils/utils.editor.js";
   import { convertMarkdown } from '../../utils/utils.editor.js'
   import { tick } from 'svelte'
@@ -34,7 +34,7 @@
   ]
 
   let getFragContent = async() => {
-    fragContent = active ? content : await convertMarkdown(content)
+    fragContent = active ? content : await convertMarkdown(content, $user.config.network_config.location + "/" + $user.config.network_config.name + "/attachments/")
     await tick()
     let links = document.querySelectorAll('.nodeLink')
     Array.from(links).forEach((el) => {
@@ -478,6 +478,28 @@
     measureSpan.remove()
   }
 
+  let handlePaste = async (e) => {
+    if (e.clipboardData.files[0]) {
+      let clipData = e.clipboardData.files[0]
+      let validImageTypes = ['image/gif', 'image/jpeg', 'image/png']
+      if (validImageTypes.includes(clipData.type)) {
+        e.preventDefault()
+        let reader = new FileReader()
+        reader.onload = async function() {
+          let attachment = addAttachment(reader.result, $user.config.network_config.location + "/" + $user.config.network_config.name)
+          let caretPos = getCaretPos(document.getElementsByClassName('active')[0]).position
+          let attachmentLink = `![${attachment.name}](${attachment.path})`
+          fragments[key].content = fragContent.substring(0, caretPos) + attachmentLink + fragContent.substring(caretPos + attachmentLink.length) 
+          fragments = fragments
+          await tick()
+          setCaretPos(caretPos + attachmentLink.length)
+          saveNode(fragments)
+        }
+        reader.readAsDataURL(clipData)
+      }
+    }
+  }
+
 </script>
 
 {#if fragContent !== undefined}
@@ -509,6 +531,7 @@
         on:blur={(e) => handleClick("blur", e)}
         on:input={handleInput}
         on:keydown={handleKeydown}
+        on:paste={handlePaste}
         contenteditable
       >
         {@html fragContent}

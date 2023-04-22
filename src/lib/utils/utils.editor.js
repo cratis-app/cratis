@@ -1,8 +1,9 @@
 import { invoke } from '@tauri-apps/api'
 import { updateReferences } from './utils.database.js'
+import { v4 as uuidv4 } from 'uuid'
 
-async function convertMarkdown(content) {
-  return await invoke('parse_md', { content })
+async function convertMarkdown(content, attachmentsDir) {
+  return await invoke('parse_md', { content, attachmentsDir })
 }
 
 async function parseContent(line) {
@@ -56,4 +57,17 @@ function isDateFormat(string) {
   return regex.test(string)
 }
 
-export { parseContent, convertMarkdown, saveNode, searchNodes, isDateFormat }
+function addAttachment(data, cratisDir) {
+  let extension = data.split(';')[0].split('/')[1]
+  let fileName = uuidv4() + '.' + extension
+  let attachmentsDir = cratisDir + "/attachments/"
+  let imageData = data.split(',')[1]
+  invoke('add_attachment', { fileName, attachmentsDir, imageData })
+  let filePath = `../attachments/${fileName}`
+  return {
+    name: fileName,
+    path: filePath
+  }
+}
+
+export { parseContent, convertMarkdown, saveNode, searchNodes, isDateFormat, addAttachment }
