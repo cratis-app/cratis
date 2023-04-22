@@ -16,7 +16,7 @@
 
     for (let i=0; i<lines.length; i++) {
       let parsedContent = await parseContent(lines[i])
-      let htmlContent = await convertMarkdown(parsedContent.content)
+      let htmlContent = await convertMarkdown(parsedContent.content, $user.config.network_config.location + '/' + $user.config.network_config.name + '/attachments/')
       refFragments[i] = {
         key: i,
         level: parsedContent.level,

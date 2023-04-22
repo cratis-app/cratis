@@ -34,7 +34,7 @@
   ]
 
   let getFragContent = async() => {
-    fragContent = active ? content : await convertMarkdown(content)
+    fragContent = active ? content : await convertMarkdown(content, $user.config.network_config.location + "/" + $user.config.network_config.name + "/attachments/")
     await tick()
     let links = document.querySelectorAll('.nodeLink')
     Array.from(links).forEach((el) => {
@@ -485,9 +485,15 @@
       if (validImageTypes.includes(clipData.type)) {
         e.preventDefault()
         let reader = new FileReader()
-        let imgLink
-        reader.onload = function() {
-          imgLink = addAttachment(reader.result)
+        reader.onload = async function() {
+          let attachment = addAttachment(reader.result, $user.config.network_config.location + "/" + $user.config.network_config.name)
+          let caretPos = getCaretPos(document.getElementsByClassName('active')[0]).position
+          let attachmentLink = `![${attachment.name}](${attachment.path})`
+          fragments[key].content = fragContent.substring(0, caretPos) + attachmentLink + fragContent.substring(caretPos + attachmentLink.length) 
+          fragments = fragments
+          await tick()
+          setCaretPos(caretPos + attachmentLink.length)
+          saveNode(fragments)
         }
         reader.readAsDataURL(clipData)
       }
