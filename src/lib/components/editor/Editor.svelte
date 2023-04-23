@@ -8,6 +8,7 @@
   let content
   let currentDate
   let journal = []
+  let frontmatter
 
   let checkIsJournal = () => {
     if ($editor.showJournal)
@@ -16,7 +17,9 @@
 
   let getContent = async () => {
     lines = []
-    content = await openNode($editor.nodePath, $editor.activeNode).then(res => res.content)
+    let nodeContent = await openNode($editor.nodePath, $editor.activeNode)
+    content = nodeContent.content
+    frontmatter = nodeContent.frontmatter
     if (content) {
       lines = content.split(/\r?\n/).filter(l => l !== "")
     } else {
@@ -77,7 +80,7 @@
       <Node bind:lines={entry.content} nodeName={entry.date} />
     {/each}
   {:else}
-    <Node bind:lines={lines} nodeName={$editor.activeNode} /> 
+    <Node bind:lines={lines} properties={frontmatter} nodeName={$editor.activeNode} /> 
   {/if}
 </section>
 

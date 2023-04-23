@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api'
 import { updateReferences } from './utils.database.js'
 import { v4 as uuidv4 } from 'uuid'
+import toml from 'toml-js'
 
 async function convertMarkdown(content, attachmentsDir) {
   return await invoke('parse_md', { content, attachmentsDir })
@@ -70,4 +71,9 @@ function addAttachment(data, cratisDir) {
   }
 }
 
-export { parseContent, convertMarkdown, saveNode, searchNodes, isDateFormat, addAttachment }
+function saveProperties(properties, nodePath) {
+  let props = toml.dump(properties)
+  invoke('save_properties', { props, nodePath })
+}
+
+export { parseContent, convertMarkdown, saveNode, searchNodes, isDateFormat, addAttachment, saveProperties }

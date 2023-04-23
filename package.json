@@ -20,6 +20,7 @@
     "showdown": "^2.1.0",
     "sigma": "^3.0.0-alpha3",
     "toml": "^3.0.0",
+    "toml-js": "^0.0.8",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
