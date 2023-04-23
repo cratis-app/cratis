@@ -6,6 +6,9 @@
   import { getNodeReferred, updateReferences } from "../../utils/utils.database.js"
   import { parseContent, saveNode } from "../../utils/utils.editor.js"
   import Reference from "./Reference.svelte";
+  import Properties from "./Properties.svelte";
+
+  export let properties = {}
   export let lines
   let references = []
   let fragments = []
@@ -18,7 +21,6 @@
 
   let lineToFragment = async () => {
     fragments = new Array(lines.length)
-
     for (let i = 0;i < lines.length; i++) {
       let parsedContent = await parseContent(lines[i])
       fragments[i] = {
@@ -42,6 +44,9 @@
 
 <section id="node">
   <h1>{nodeName}</h1>
+  {#if !$editor.showJournal}
+    <Properties properties={properties} nodePath={nodePath} /> 
+  {/if}
   {#if fragments[fragments.length - 1]}
     {#each fragments as fragment}
       <div key={fragment.key}>
@@ -75,6 +80,11 @@
 
 <style lang="scss">
   #node {
+
+    h1 {
+      margin-bottom: 16px;
+    }
+
     div {
       pointer-events: none;
       margin-bottom: 0.5em;

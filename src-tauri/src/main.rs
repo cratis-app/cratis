@@ -16,7 +16,7 @@ mod database;
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![create_network, create_node, open_node, parse_md, save_node, search_nodes, get_journal_entries, database::create_database, database::index_nodes, database::add_node, database::update_references, database::get_node_referred, database::get_source_content, database::get_nodes, database::get_references, add_attachment])
+        .invoke_handler(tauri::generate_handler![create_network, create_node, open_node, parse_md, save_node, search_nodes, get_journal_entries, database::create_database, database::index_nodes, database::add_node, database::update_references, database::get_node_referred, database::get_source_content, database::get_nodes, database::get_references, add_attachment, save_properties])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -167,4 +167,28 @@ fn add_attachment(fileName: String, attachmentsDir: String, imageData: String) -
        .open(&file_dir).unwrap();
    file.write_all(&bytes);
    return fileName
+}
+
+#[tauri::command]
+fn save_properties(props: String, nodePath: String) {
+    let contents = fs::read_to_string(&nodePath).expect("Could not read file");
+    let delim = "+++\n";
+    let mut modified_string = String::new();
+    if let Some(start_index) = contents.find(delim) {
+        let end_index = contents[start_index + delim.len()..]
+            .find(delim)
+            .map(|i| i + start_index + delim.len())
+            .unwrap_or(contents.len());
+        modified_string.push_str(&contents[..start_index]);
+        modified_string.push_str(delim);
+        modified_string.push_str(&props);
+        modified_string.push_str(delim);
+        modified_string.push_str(&contents[end_index + delim.len()..]);
+    } else {
+        modified_string.push_str(delim);
+        modified_string.push_str(&props);
+        modified_string.push_str(delim);
+    }
+    let mut f = fs::OpenOptions::new().write(true).open(&nodePath).expect("Could not open file");
+    f.write_all(modified_string.as_bytes()).expect("Could not save file");
 }
