@@ -479,23 +479,32 @@
   }
 
   let handlePaste = async (e) => {
-    if (e.clipboardData.files[0]) {
+    let items = await navigator.clipboard.read()
+    if (e.clipboardData.files[0] || items[0]) {
       let clipData = e.clipboardData.files[0]
       let validImageTypes = ['image/gif', 'image/jpeg', 'image/png']
-      if (validImageTypes.includes(clipData.type)) {
+
+      let reader = new FileReader()
+      reader.onload = async function() {
+        let attachment = addAttachment(reader.result, $user.config.network_config.location + "/" + $user.config.network_config.name)
+        let caretPos = getCaretPos(document.getElementsByClassName('active')[0]).position
+        let attachmentLink = `![${attachment.name}](${attachment.path})`
+        console.log(attachmentLink)
+        fragments[key].content = fragContent.substring(0, caretPos) + attachmentLink + fragContent.substring(caretPos + attachmentLink.length) 
+        fragments = fragments
+        await tick()
+        setCaretPos(caretPos + attachmentLink.length)
+        saveNode(fragments)
+      }
+
+      if (clipData && validImageTypes.includes(clipData.type)) {
         e.preventDefault()
-        let reader = new FileReader()
-        reader.onload = async function() {
-          let attachment = addAttachment(reader.result, $user.config.network_config.location + "/" + $user.config.network_config.name)
-          let caretPos = getCaretPos(document.getElementsByClassName('active')[0]).position
-          let attachmentLink = `![${attachment.name}](${attachment.path})`
-          fragments[key].content = fragContent.substring(0, caretPos) + attachmentLink + fragContent.substring(caretPos + attachmentLink.length) 
-          fragments = fragments
-          await tick()
-          setCaretPos(caretPos + attachmentLink.length)
-          saveNode(fragments)
-        }
         reader.readAsDataURL(clipData)
+      }
+      // use navigator for webkit - only supports png
+      else if (items[0].types.includes('image/png')) {
+        e.preventDefault()
+        reader.readAsDataURL(await items[0].getType('image/png'))  
       }
     }
   }

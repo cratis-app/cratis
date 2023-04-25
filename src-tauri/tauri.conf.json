@@ -37,6 +37,11 @@
         "renameFile": true,
         "exists": true,
         "scope": ["$APPCONFIG/*", "$APPCONFIG/config/*", "$RESOURCE/templates/*"]
+      },
+      "clipboard": {
+        "all": true,
+        "writeText": true,
+        "readText": true
       }
     },
     "bundle": {
@@ -72,3 +77,4 @@
     ]
   }
 }
+
