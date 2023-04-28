@@ -45,7 +45,7 @@
 <section id="node">
   <h1>{nodeName}</h1>
   {#if !$editor.showJournal}
-    <Properties properties={properties} nodePath={nodePath} /> 
+    <Properties properties={properties} nodePath={nodePath} nodeName={nodeName} /> 
   {/if}
   {#if fragments[fragments.length - 1]}
     {#each fragments as fragment}

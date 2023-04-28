@@ -5,10 +5,14 @@ use regex::Regex;
 use log::{debug, LevelFilter};
 use env_logger::{Env, Builder};
 use serde::Serialize;
+use serde_json::Value;
+use toml::value::Table;
 use std::sync::Mutex;
 use lazy_static::lazy_static;
 use std::io::Write;
 use std::fs::ReadDir;
+use std::collections::HashMap;
+use core::str::Split;
 
 lazy_static! {
     static ref LOGGER: Mutex<Option<Builder>> = Mutex::new(None);
@@ -43,6 +47,15 @@ pub fn create_database(databaseDir: String) {
         )",
         (),
     ).expect("Could not create table links");
+
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS properties (
+            node TEXT REFERENCES nodes(name),
+            property TEXT NOT NULL,
+            value TEXT
+        )",
+        (),
+    ).expect("Could not create table properties");
 }
 
 #[derive(Debug, Serialize)]
@@ -75,6 +88,7 @@ pub fn index_nodes(databaseDir: String, nodesDir: String) -> Result<(), String> 
     // empty tables
     conn.execute_batch(
         "DELETE FROM links;
+        DELETE FROM properties;
         DELETE FROM nodes;"
     ).expect("Could not delete tables");
 
@@ -112,7 +126,19 @@ fn index_dir(paths: ReadDir, conn: &Connection) {
         let mut file = fs::File::open(&path).unwrap();
         let mut node_content = String::new();
         file.read_to_string(&mut node_content).unwrap();
+        let lines = &node_content.split("\n").collect::<Vec<&str>>();
+        if lines[0] == "+++" {
+            // update properties
+            let parts = &node_content.split("+++").collect::<Vec<&str>>();
+            let frontmatter = parts[1];
+            let props: HashMap<String, String> = toml::from_str(frontmatter).unwrap();
 
+            for (k, v) in props.iter() {
+                conn.execute("INSERT INTO properties (node, property, value) VALUES (?1, ?2, ?3)", [&node_name, &k, &v]).expect("Could not insert into properties table"); 
+            }
+        }
+
+        // update refs
         let re_link = Regex::new(r"\[\[(.+?)\]\]").unwrap();
         let re_tag = Regex::new(r"(?:^|\s)#(\w+)\b").unwrap();
         let mut refs: Vec<String> = Vec::new();
@@ -272,4 +298,16 @@ pub fn get_references(databaseDir: String) -> Vec<Link> {
     }
 
     references
+}
+
+#[tauri::command]
+pub fn update_properties(databaseDir: String, propertiesObj: &str, nodeName: String) {
+    let conn = Connection::open(&databaseDir).expect("Could not open db");
+
+    let properties: HashMap<String, String> = serde_json::from_str(propertiesObj).expect("Could not parse properties json");
+
+    conn.execute("DELETE FROM properties WHERE node = ?1", [&nodeName]).expect("Could not delete node properties");
+    for (key, value) in properties.iter() {
+        conn.execute("INSERT INTO properties (node, property, value) VALUES (?1, ?2, ?3)", [&nodeName, &key, &value]).expect("Could not insert property");
+    }
 }
