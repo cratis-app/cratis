@@ -1,7 +1,9 @@
 <script>
   import { saveProperties } from "../../utils/utils.editor";
+  import { updateProperties } from "../../utils/utils.database"
 
   export let nodePath
+  export let nodeName
   export let properties = {}
   let showProperties = false
 
@@ -17,6 +19,7 @@
     }
     properties = obj
     saveProperties(obj, nodePath)
+    updateProperties(obj, nodeName)
   }
 
   let handleKeydown = (e) => {

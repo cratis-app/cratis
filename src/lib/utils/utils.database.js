@@ -51,4 +51,12 @@ async function getReferences() {
   databaseDir += "/Cratis/database.db"
   return await invoke('get_references', { databaseDir })
 }
-export { createDatabase, indexNodes, addNode, updateReferences, getNodeReferred, getSourceContent, getNodes, getReferences }
+
+async function updateProperties(properties, nodeName) {
+  let databaseDir = await configDir()
+  databaseDir += "/Cratis/database.db"
+  let propertiesObj = JSON.stringify(properties)
+  invoke('update_properties', { databaseDir, propertiesObj, nodeName })
+}
+
+export { createDatabase, indexNodes, addNode, updateReferences, getNodeReferred, getSourceContent, getNodes, getReferences, updateProperties }
