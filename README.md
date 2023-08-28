@@ -6,11 +6,11 @@ Cratis is a bi-directional outliner built using Tauri and SvelteKit.
 You can create notes using markdown, link to other notes, and view all your notes and their connections in a network graph.
 
 ## Downloads
-[Linux (AppImage)](https://github.com/jostal/sk-cratis/releases/download/v0.1.0/cratis_0.1.0_amd64.AppImage)
+[Linux (AppImage)](https://github.com/cratis-app/cratis/releases/download/v0.1.1/cratis_0.1.1_amd64.AppImage)
 
-[Debian](https://github.com/jostal/sk-cratis/releases/download/v0.1.0/cratis_0.1.0_amd64.deb)
+[Debian](https://github.com/cratis-app/cratis/releases/download/v0.1.1/cratis_0.1.1_amd64.deb)
 
-[Windows](https://github.com/jostal/sk-cratis/releases/download/v0.1.0/Cratis_0.1.0_x64_en-US.msi)
+[Windows](https://github.com/cratis-app/cratis/releases/download/v0.1.1/Cratis_0.1.1_x64_en-US.msi)
 
 ## Features
 
@@ -58,7 +58,7 @@ Found on YouTube ![here](https://www.youtube.com/watch?v=HvM7Fqb5boQ)
 
 Use the demo network to see what Cratis is capable of and view a tutorial on how to use it.
 
-Download the network [here](https://github.com/jostal/sk-cratis/releases/download/v0.1.0/demo_network.zip).
+Download the network [here](https://github.com/cratis-app/cratis/releases/download/v0.1.1/demo_network.zip).
 
 ### Open the network
 
