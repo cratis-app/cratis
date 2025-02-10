@@ -1,6 +1,6 @@
 # Cratis
 
-<img src="https://cdn.josephtalon.ca/images/Cratis/icon.png" width="100px" />
+<img src="https://jtalon-cdn.nyc3.digitaloceanspaces.com/images/portfolio/icons/Cratis.png" width="100px" />
 
 Cratis is a bi-directional outliner built using Tauri and SvelteKit.
 You can create notes using markdown, link to other notes, and view all your notes and their connections in a network graph.
@@ -32,11 +32,11 @@ Indent your current line by pressing ```Tab``` or shift it back a level with ```
 
 Re-order your points with drag and drop.
 
-### Daily Journal ![Journal](https://cdn.josephtalon.ca/images/Cratis/calendar.svg)
+### Daily Journal ![Journal](https://jtalon-cdn.nyc3.digitaloceanspaces.com/images/Cratis/calendar.svg)
 
 Cratis automatically creates a daily note that goes into your "journal" every day you open the app. From here, you can insert any thoughts you have throughout the day and start building your network.
 
-### View all notes and connections ![Network](https://cdn.josephtalon.ca/images/Cratis/network.svg)
+### View all notes and connections ![Network](https://jtalon-cdn.nyc3.digitaloceanspaces.com/images/Cratis/network.svg)
 
 View and navigate all your notes and their connections with the network view.
 
@@ -67,4 +67,4 @@ Download the network [here](https://github.com/cratis-app/cratis/releases/downlo
 3. Select the location you unzipped the demo network to (but not the network itself "My Notes")
 4. Set the network name to "My Notes" and click the "Create Network" button
 
-![Create Network View](https://cdn.josephtalon.ca/images/Cratis/Craits_create_network.png)
+![Create Network View](https://jtalon-cdn.nyc3.digitaloceanspaces.com/images/Cratis/Craits_create_network.png)
